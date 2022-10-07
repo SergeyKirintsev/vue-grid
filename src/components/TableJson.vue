@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2>super table</h2>
-    <div :style="gridStyle" class="grid-container">
+    <h2>super table!!!</h2>
+    <div :style="gridAreas" class="grid-container">
       <Header :items="headers" />
 
       <div
@@ -193,8 +193,25 @@ export default {
     },
 
     gridAreas() {
-      const h5 = 'header-5';
-      return h5;
+      const arr = [
+        'header-1 header-2 header-3 header-4 header-5',
+        'doc-class doc-type-1 doc-lang-1 doc-vid-1 doc-1',
+        'doc-class doc-type-1 doc-lang-2 doc-vid-2 doc-2',
+        'doc-class doc-type-1 doc-lang-2 doc-vid-3 doc-3',
+        'doc-class doc-type-1 doc-lang-2 doc-vid-4 doc-4',
+        'doc-class line-1     line-2     line-3    line-4',
+        'doc-class doc-type-2 doc-lang-3 doc-vid-5 doc-5',
+        'doc-class doc-type-2 doc-lang-4 doc-vid-6 doc-6',
+        'doc-class line-5     line-6     line-7    line-8',
+      ];
+
+      let areas = '';
+
+      arr.forEach(el => {
+        areas += `"${el}" `;
+      })
+
+      return `grid-template-areas: ${areas};`;
     },
 
     gridStyle() {
@@ -203,7 +220,7 @@ export default {
         border: '2px solid #d4dbec',
         gridTemplateColumns: `repeat(5, 1fr)`,
         gridTemplateRows: '52px',
-        gridTemplateAreas: 'a b',
+        gridTemplateAreas: this.gridAreas,
       };
     },
   },
@@ -211,6 +228,11 @@ export default {
   methods: {
     mapName(arr) {
       return new Set(arr.map((el) => el.name));
+    },
+
+    gridAreasMethods() {
+      const h5 = 'header-5';
+      return 'qwqw xccvx';
     },
   },
 };
@@ -227,16 +249,6 @@ export default {
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: 50px;
   grid-auto-rows: 40px;
-  grid-template-areas:
-    'header-1 header-2 header-3 header-4 header-5'
-    'doc-class doc-type-1 doc-lang-1 doc-vid-1 doc-1'
-    'doc-class doc-type-1 doc-lang-2 doc-vid-2 doc-2'
-    'doc-class doc-type-1 doc-lang-2 doc-vid-3 doc-3'
-    'doc-class doc-type-1 doc-lang-2 doc-vid-4 doc-4'
-    'doc-class line-1     line-2     line-3    line-4'
-    'doc-class doc-type-2 doc-lang-3 doc-vid-5 doc-5'
-    'doc-class doc-type-2 doc-lang-4 doc-vid-6 doc-6'
-    'doc-class line-5     line-6     line-7    line-8';
 }
 
 .edit-btn {
