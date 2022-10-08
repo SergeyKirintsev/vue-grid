@@ -50,7 +50,7 @@
       <button class="edit-btn"></button>
     </div>
 
-    <!-- <div class="line line-1"></div>
+    <div class="line line-1"><button class="edit-btn"></button></div>
     <div class="line line-2"><button class="edit-btn"></button></div>
     <div class="line line-3"><button class="edit-btn"></button></div>
     <div class="line line-4"></div>
@@ -58,7 +58,7 @@
     <div class="line-5"><button class="edit-btn"></button></div>
     <div class="line-6"><button class="edit-btn"></button></div>
     <div class="line-7"><button class="edit-btn"></button></div>
-    <div class="line-8"></div> -->
+    <div class="line-8"></div>
   </div>
 </template>
 
@@ -218,6 +218,9 @@ export default {
           index: 1,
           name: '',
         },
+        line: {
+          index: 1,
+        },
       };
 
       const docs = this.level_5.map((el) => el.path);
@@ -235,6 +238,11 @@ export default {
           if (levels[idx].name !== arr[idx - 1]) {
             levels[idx].index++;
             levels[idx].name = arr[idx - 1];
+
+            if (idx === 2) {
+              areas.push(this.getLine(levels.line.index));
+              levels.line.index++;
+            }
           }
           areasLine += `${this.getLevelClass(idx)}-${levels[idx].index} `;
         }
@@ -243,6 +251,7 @@ export default {
 
         areas.push(areasLine.trim());
       });
+      areas.push(this.getLine(levels.line.index));
 
       let areasText = '';
 
@@ -271,8 +280,17 @@ export default {
         3: 'doc-lang',
         4: 'doc-vid',
         5: 'doc-amount',
+        line: 'line',
       };
       return classes[level];
+    },
+
+    getLine(idx) {
+      const lineIdx = (idx - 1) * 4 + 1;
+      const lineClass = this.getLevelClass('line');
+      return `doc-class-1 ${lineClass}-${lineIdx} ${lineClass}-${
+        lineIdx + 1
+      } ${lineClass}-${lineIdx + 2} ${lineClass}-${lineIdx + 3}`;
     },
   },
 };
