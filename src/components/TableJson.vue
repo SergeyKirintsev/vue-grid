@@ -50,7 +50,38 @@
       <button class="edit-btn"></button>
     </div>
 
-    <div class="line line-1"><button class="edit-btn"></button></div>
+    <!-- строки с кнопками -->
+    <template v-for="(item, idx) in level_2">
+      <div
+        :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-1`]"
+        :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-1` }"
+      >
+        <button v-if="isLastElement(idx, level_2)" class="edit-btn"></button>
+      </div>
+
+      <div
+        :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-2`]"
+        :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-2` }"
+      >
+        <button class="edit-btn"></button>
+      </div>
+
+      <div
+        :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-3`]"
+        :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-3` }"
+      >
+        <button class="edit-btn"></button>
+      </div>
+
+      <div
+        :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-4`]"
+        :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-4` }"
+      >
+        <button class="edit-btn"></button>
+      </div>
+    </template>
+
+    <!-- <div class="line line-1"><button class="edit-btn"></button></div>
     <div class="line line-2"><button class="edit-btn"></button></div>
     <div class="line line-3"><button class="edit-btn"></button></div>
     <div class="line line-4"></div>
@@ -58,7 +89,7 @@
     <div class="line-5"><button class="edit-btn"></button></div>
     <div class="line-6"><button class="edit-btn"></button></div>
     <div class="line-7"><button class="edit-btn"></button></div>
-    <div class="line-8"></div>
+    <div class="line-8"></div> -->
   </div>
 </template>
 
@@ -85,9 +116,7 @@ export default {
 
     level_2() {
       const keyLevelOne = this.level_1[0].name;
-      const keysLevelTwo = Object.keys(this.obj[keyLevelOne]).filter(
-        this.notId
-      );
+      const keysLevelTwo = Object.keys(this.obj[keyLevelOne]).filter(this.notId);
 
       const data = [];
 
@@ -110,9 +139,7 @@ export default {
       const data = [];
 
       keysLevelTwo.forEach((keyLevelTwo) => {
-        const keysLevelThree = Object.keys(
-          this.obj[keyLevelOne][keyLevelTwo]
-        ).filter(this.notId);
+        const keysLevelThree = Object.keys(this.obj[keyLevelOne][keyLevelTwo]).filter(this.notId);
 
         keysLevelThree.forEach((keyLevelThree) => {
           const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree].id;
@@ -136,14 +163,10 @@ export default {
 
       keysLevelTwo.forEach((keyLevelTwo) => {
         keysLevelThree.forEach((keyLevelThree) => {
-          const keysLevelFour = Object.keys(
-            this.obj[keyLevelOne][keyLevelTwo][keyLevelThree]
-          ).filter(this.notId);
+          const keysLevelFour = Object.keys(this.obj[keyLevelOne][keyLevelTwo][keyLevelThree]).filter(this.notId);
 
           keysLevelFour.forEach((keyLevelFour) => {
-            const id =
-              this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour]
-                .id;
+            const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour].id;
             const name = keyLevelFour;
             data.push({
               id,
@@ -167,19 +190,13 @@ export default {
       keysLevelTwo.forEach((keyLevelTwo) => {
         keysLevelThree.forEach((keyLevelThree) => {
           keysLevelFour.forEach((keyLevelFour) => {
-            const current =
-              this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour];
+            const current = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour];
             if (current) {
               const keysLevelFive = Object.keys(current).filter(this.notId);
 
               const name = keysLevelFive[0];
               const value = current[name];
-              const path = [
-                keyLevelOne,
-                keyLevelTwo,
-                keyLevelThree,
-                keyLevelFour,
-              ];
+              const path = [keyLevelOne, keyLevelTwo, keyLevelThree, keyLevelFour];
 
               data.push({
                 name,
@@ -286,11 +303,12 @@ export default {
     },
 
     getLine(idx) {
-      const lineIdx = (idx - 1) * 4 + 1;
       const lineClass = this.getLevelClass('line');
-      return `doc-class-1 ${lineClass}-${lineIdx} ${lineClass}-${
-        lineIdx + 1
-      } ${lineClass}-${lineIdx + 2} ${lineClass}-${lineIdx + 3}`;
+      return `doc-class-1 ${lineClass}-${idx}-1 ${lineClass}-${idx}-2 ${lineClass}-${idx}-3 ${lineClass}-${idx}-4`;
+    },
+
+    isLastElement(idx, arr) {
+      return idx + 1 === arr.length;
     },
   },
 };
