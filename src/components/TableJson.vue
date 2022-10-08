@@ -1,73 +1,70 @@
 <template>
-  <div>
-    <h2>super table!!!</h2>
-    <div :style="gridAreas" class="grid-container">
-      <Header :items="headers" />
-
-      <div
-        v-for="(item, idx) in level_1"
-        :style="{ gridArea: `doc-class` }"
-        class="doc-class"
-      >
-        <span>{{ item.name }}</span>
-        <button class="trash-btn"></button>
-      </div>
-
-      <div
-        v-for="(item, idx) in level_2"
-        :class="[`doc-type-${idx + 1}`]"
-        :style="{ gridArea: `doc-type-${idx + 1}` }"
-      >
-        {{ item.name }}
-      </div>
-
-      <div
-        v-for="(item, idx) in level_3"
-        :class="[`doc-lang-${idx + 1}`]"
-        :style="{ gridArea: `doc-lang-${idx + 1}` }"
-      >
-        {{ item.name }}
-      </div>
-
-      <div
-        v-for="(item, idx) in level_4"
-        :class="[`doc-vid-${idx + 1}`]"
-        :style="{ gridArea: `doc-vid-${idx + 1}` }"
-      >
-        {{ item.name }}
-      </div>
-
-      <div
-        v-for="(item, idx) in level_5"
-        :class="['doc', `doc-${idx + 1}`]"
-        :style="{ gridArea: `doc-${idx + 1}` }"
-      >
-        <span> {{ item.name }} {{ item.value }}</span>
-        <button class="edit-btn"></button>
-      </div>
-
-      <div class="line line-1"></div>
-      <div class="line line-2"><button class="edit-btn"></button></div>
-      <div class="line line-3"><button class="edit-btn"></button></div>
-      <div class="line line-4"></div>
-
-      <div class="line-5"><button class="edit-btn"></button></div>
-      <div class="line-6"><button class="edit-btn"></button></div>
-      <div class="line-7"><button class="edit-btn"></button></div>
-      <div class="line-8"></div>
+  <div :style="gridAreas" class="grid-container">
+    <div
+      v-for="(item, idx) in headers"
+      :class="[`${getLevelClass(0)} ${getLevelClass(0)}-${idx + 1}`]"
+      :style="{ gridArea: `header-${idx + 1}` }"
+    >
+      {{ item }}
     </div>
+
+    <div
+      v-for="(item, idx) in level_1"
+      :class="[`${getLevelClass(1)} ${getLevelClass(1)}-${idx + 1}`]"
+      :style="{ gridArea: `${getLevelClass(1)}-${idx + 1}` }"
+    >
+      <span>{{ item.name }}</span>
+      <button class="trash-btn"></button>
+    </div>
+
+    <div
+      v-for="(item, idx) in level_2"
+      :class="[`${getLevelClass(2)} ${getLevelClass(2)}-${idx + 1}`]"
+      :style="{ gridArea: `${getLevelClass(2)}-${idx + 1}` }"
+    >
+      {{ item.name }}
+    </div>
+
+    <div
+      v-for="(item, idx) in level_3"
+      :class="[`${getLevelClass(3)} ${getLevelClass(3)}-${idx + 1}`]"
+      :style="{ gridArea: `${getLevelClass(3)}-${idx + 1}` }"
+    >
+      {{ item.name }}
+    </div>
+
+    <div
+      v-for="(item, idx) in level_4"
+      :class="[`${getLevelClass(4)} ${getLevelClass(4)}-${idx + 1}`]"
+      :style="{ gridArea: `${getLevelClass(4)}-${idx + 1}` }"
+    >
+      {{ item.name }}
+    </div>
+
+    <div
+      v-for="(item, idx) in level_5"
+      :class="[`${getLevelClass(5)} ${getLevelClass(5)}-${idx + 1}`]"
+      :style="{ gridArea: `${getLevelClass(5)}-${idx + 1}` }"
+    >
+      <span> {{ item.name }} {{ item.value }}</span>
+      <button class="edit-btn"></button>
+    </div>
+
+    <!-- <div class="line line-1"></div>
+    <div class="line line-2"><button class="edit-btn"></button></div>
+    <div class="line line-3"><button class="edit-btn"></button></div>
+    <div class="line line-4"></div>
+
+    <div class="line-5"><button class="edit-btn"></button></div>
+    <div class="line-6"><button class="edit-btn"></button></div>
+    <div class="line-7"><button class="edit-btn"></button></div>
+    <div class="line-8"></div> -->
   </div>
 </template>
 
 <script>
-import Header from './Header.vue';
-
 export default {
   name: 'TableJson',
-
-  components: {
-    Header,
-  },
 
   props: {
     obj: Object,
@@ -89,7 +86,7 @@ export default {
     level_2() {
       const keyLevelOne = this.level_1[0].name;
       const keysLevelTwo = Object.keys(this.obj[keyLevelOne]).filter(
-        (key) => key !== 'id'
+        this.notId
       );
 
       const data = [];
@@ -115,7 +112,7 @@ export default {
       keysLevelTwo.forEach((keyLevelTwo) => {
         const keysLevelThree = Object.keys(
           this.obj[keyLevelOne][keyLevelTwo]
-        ).filter((key) => key !== 'id');
+        ).filter(this.notId);
 
         keysLevelThree.forEach((keyLevelThree) => {
           const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree].id;
@@ -141,7 +138,7 @@ export default {
         keysLevelThree.forEach((keyLevelThree) => {
           const keysLevelFour = Object.keys(
             this.obj[keyLevelOne][keyLevelTwo][keyLevelThree]
-          ).filter((key) => key !== 'id');
+          ).filter(this.notId);
 
           keysLevelFour.forEach((keyLevelFour) => {
             const id =
@@ -173,16 +170,21 @@ export default {
             const current =
               this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour];
             if (current) {
-              const keysLevelFive = Object.keys(current).filter(
-                (key) => key !== 'id'
-              );
+              const keysLevelFive = Object.keys(current).filter(this.notId);
 
               const name = keysLevelFive[0];
               const value = current[name];
+              const path = [
+                keyLevelOne,
+                keyLevelTwo,
+                keyLevelThree,
+                keyLevelFour,
+              ];
 
               data.push({
                 name,
                 value,
+                path,
               });
             }
           });
@@ -193,35 +195,62 @@ export default {
     },
 
     gridAreas() {
-      const arr = [
-        'header-1 header-2 header-3 header-4 header-5',
-        'doc-class doc-type-1 doc-lang-1 doc-vid-1 doc-1',
-        'doc-class doc-type-1 doc-lang-2 doc-vid-2 doc-2',
-        'doc-class doc-type-1 doc-lang-2 doc-vid-3 doc-3',
-        'doc-class doc-type-1 doc-lang-2 doc-vid-4 doc-4',
-        'doc-class line-1     line-2     line-3    line-4',
-        'doc-class doc-type-2 doc-lang-3 doc-vid-5 doc-5',
-        'doc-class doc-type-2 doc-lang-4 doc-vid-6 doc-6',
-        'doc-class line-5     line-6     line-7    line-8',
-      ];
+      const areas = ['header-1  header-2   header-3   header-4  header-5'];
 
-      let areas = '';
-
-      arr.forEach(el => {
-        areas += `"${el}" `;
-      })
-
-      return `grid-template-areas: ${areas};`;
-    },
-
-    gridStyle() {
-      return {
-        display: 'grid',
-        border: '2px solid #d4dbec',
-        gridTemplateColumns: `repeat(5, 1fr)`,
-        gridTemplateRows: '52px',
-        gridTemplateAreas: this.gridAreas,
+      const levels = {
+        1: {
+          index: 1,
+          name: '',
+        },
+        2: {
+          index: 1,
+          name: '',
+        },
+        3: {
+          index: 1,
+          name: '',
+        },
+        4: {
+          index: 1,
+          name: '',
+        },
+        5: {
+          index: 1,
+          name: '',
+        },
       };
+
+      const docs = this.level_5.map((el) => el.path);
+
+      const arr0 = docs[0];
+      levels[1].name = arr0[0];
+      levels[2].name = arr0[1];
+      levels[3].name = arr0[2];
+      levels[4].name = arr0[3];
+
+      docs.forEach((arr) => {
+        let areasLine = '';
+
+        for (let idx = 1; idx <= 4; idx++) {
+          if (levels[idx].name !== arr[idx - 1]) {
+            levels[idx].index++;
+            levels[idx].name = arr[idx - 1];
+          }
+          areasLine += `${this.getLevelClass(idx)}-${levels[idx].index} `;
+        }
+        areasLine += `${this.getLevelClass(5)}-${levels[5].index} `;
+        levels[5].index++;
+
+        areas.push(areasLine.trim());
+      });
+
+      let areasText = '';
+
+      areas.forEach((areasLine) => {
+        areasText += `"${areasLine}" `;
+      });
+
+      return `grid-template-areas: ${areasText};`;
     },
   },
 
@@ -230,9 +259,20 @@ export default {
       return new Set(arr.map((el) => el.name));
     },
 
-    gridAreasMethods() {
-      const h5 = 'header-5';
-      return 'qwqw xccvx';
+    notId(key) {
+      return key !== 'id';
+    },
+
+    getLevelClass(level) {
+      const classes = {
+        0: 'header',
+        1: 'doc-class',
+        2: 'doc-type',
+        3: 'doc-lang',
+        4: 'doc-vid',
+        5: 'doc-amount',
+      };
+      return classes[level];
     },
   },
 };
@@ -276,7 +316,7 @@ export default {
   margin: 5px;
 }
 
-.doc {
+.doc-amount {
   display: flex;
   justify-content: space-between;
 }
