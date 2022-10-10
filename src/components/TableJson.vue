@@ -163,16 +163,19 @@ export default {
 
       keysLevelTwo.forEach((keyLevelTwo) => {
         keysLevelThree.forEach((keyLevelThree) => {
-          const keysLevelFour = Object.keys(this.obj[keyLevelOne][keyLevelTwo][keyLevelThree]).filter(this.notId);
+          const current = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree];
+          if (current) {
+            const keysLevelFour = Object.keys(current).filter(this.notId);
 
-          keysLevelFour.forEach((keyLevelFour) => {
-            const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour].id;
-            const name = keyLevelFour;
-            data.push({
-              id,
-              name,
+            keysLevelFour.forEach((keyLevelFour) => {
+              const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour].id;
+              const name = keyLevelFour;
+              data.push({
+                id,
+                name,
+              });
             });
-          });
+          }
         });
       });
 
@@ -190,7 +193,7 @@ export default {
       keysLevelTwo.forEach((keyLevelTwo) => {
         keysLevelThree.forEach((keyLevelThree) => {
           keysLevelFour.forEach((keyLevelFour) => {
-            const current = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour];
+            const current = this.obj[keyLevelOne][keyLevelTwo]?.[keyLevelThree]?.[keyLevelFour];
             if (current) {
               const keysLevelFive = Object.keys(current).filter(this.notId);
 
@@ -242,25 +245,40 @@ export default {
 
       const docs = this.level_5.map((el) => el.path);
 
+      /*  сохраняем значения для сравнения
+       *  и изменения индекса в случае изменения
+       */
       const arr0 = docs[0];
       levels[1].name = arr0[0];
       levels[2].name = arr0[1];
       levels[3].name = arr0[2];
       levels[4].name = arr0[3];
 
-      docs.forEach((arr) => {
+      docs.forEach((arrPath, str) => {
         let areasLine = '';
 
+        let isLevel_2_Changed = false; // Тип документации
+
         for (let idx = 1; idx <= 4; idx++) {
-          if (levels[idx].name !== arr[idx - 1]) {
+          // увеличиваем индекс (levels[idx].index++) при смене наименования
+          if (levels[idx].name !== arrPath[idx - 1]) {
             levels[idx].index++;
-            levels[idx].name = arr[idx - 1];
+            levels[idx].name = arrPath[idx - 1];
 
             if (idx === 2) {
               areas.push(this.getLine(levels.line.index));
               levels.line.index++;
+              isLevel_2_Changed = true; // Тип документации
+              levels[3].index++;
+            }
+
+            if (idx === 3) {
+              if (isLevel_2_Changed) {
+                levels[3].index--;
+              }
             }
           }
+
           areasLine += `${this.getLevelClass(idx)}-${levels[idx].index} `;
         }
         areasLine += `${this.getLevelClass(5)}-${levels[5].index} `;
@@ -276,13 +294,15 @@ export default {
         areasText += `"${areasLine}" `;
       });
 
+      console.table(docs);
+      console.table(areas);
       return `grid-template-areas: ${areasText};`;
     },
   },
 
   methods: {
     mapName(arr) {
-      return new Set(arr.map((el) => el.name));
+      return Array.from(new Set(arr.map((el) => el.name)));
     },
 
     notId(key) {
@@ -320,7 +340,7 @@ export default {
 }
 
 .grid-container {
-  border: 1px solid #d4dbec;
+  /* border: 1px solid #d4dbec; */
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   grid-template-rows: 50px;
@@ -355,10 +375,12 @@ export default {
 .doc-amount {
   display: flex;
   justify-content: space-between;
+  border-right: 1px solid #d4dbec;
 }
 
 .doc-class {
-  border-right: 1px solid #d4dbec;
+  border: 1px solid #d4dbec;
+  border-top: none;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -367,41 +389,12 @@ export default {
 
 .line {
   border-bottom: 1px solid #d4dbec;
+  border-right: 1px solid #d4dbec;
 }
 
-.line-1 {
-  grid-area: line-1;
-}
-
-.line-2 {
-  grid-area: line-2;
-}
-
-.line-3 {
-  grid-area: line-3;
-}
-
-.line-4 {
-  grid-area: line-4;
-}
-
-.line-5 {
-  grid-area: line-5;
-}
-
-.line-6 {
-  grid-area: line-6;
-}
-
-.line-7 {
-  grid-area: line-7;
-}
-
-.line-8 {
-  grid-area: line-8;
-}
-
-.line-9 {
-  grid-area: line-9;
+.doc-type,
+.doc-lang,
+.doc-vid {
+  border-right: 1px solid #d4dbec;
 }
 </style>
