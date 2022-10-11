@@ -14,7 +14,7 @@
       :style="{ gridArea: `${getLevelClass(1)}-${idx + 1}` }"
     >
       <span>{{ item.name }}</span>
-      <button class="trash-btn"></button>
+      <button class="trash-btn" @click="deleteClass(item)"></button>
     </div>
 
     <div
@@ -47,7 +47,7 @@
       :style="{ gridArea: `${getLevelClass(5)}-${idx + 1}` }"
     >
       <span> {{ item.name }} {{ item.value }}</span>
-      <button class="edit-btn"></button>
+      <button class="edit-btn" @click="editDocuments(item)"></button>
     </div>
 
     <!-- строки с кнопками -->
@@ -56,40 +56,30 @@
         :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-1`]"
         :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-1` }"
       >
-        <button v-if="isLastElement(idx, level_2)" class="edit-btn"></button>
+        <button v-if="isLastElement(idx, level_2)" class="edit-btn" @click="editType(item)"></button>
       </div>
 
       <div
         :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-2`]"
         :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-2` }"
       >
-        <button class="edit-btn"></button>
+        <button class="edit-btn" @click="editLanguage(item)"></button>
       </div>
 
       <div
         :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-3`]"
         :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-3` }"
       >
-        <button class="edit-btn"></button>
+        <button class="edit-btn" @click="editVid(item)"></button>
       </div>
 
       <div
         :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-4`]"
         :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-4` }"
       >
-        <button class="edit-btn"></button>
+        <!-- <button class="edit-btn"></button> -->
       </div>
     </template>
-
-    <!-- <div class="line line-1"><button class="edit-btn"></button></div>
-    <div class="line line-2"><button class="edit-btn"></button></div>
-    <div class="line line-3"><button class="edit-btn"></button></div>
-    <div class="line line-4"></div>
-
-    <div class="line-5"><button class="edit-btn"></button></div>
-    <div class="line-6"><button class="edit-btn"></button></div>
-    <div class="line-7"><button class="edit-btn"></button></div>
-    <div class="line-8"></div> -->
   </div>
 </template>
 
@@ -227,28 +217,31 @@ export default {
 
       // 2
       docs.forEach((arrPath) => {
-        const prev = arrPath[0];
-        const name = arrPath[1];
-        if (!unique.has(prev + name)) {
-          const id = this.obj[prev][name].id;
-          unique.add(prev + name);
+        const keyLevelOne = arrPath[0];
+        const keyLevelTwo = arrPath[1];
+        if (!unique.has(keyLevelOne + keyLevelTwo)) {
+          const id = this.obj[keyLevelOne][keyLevelTwo].id;
+          unique.add(keyLevelOne + keyLevelTwo);
           list[2].push({
             id,
-            name,
+            name: keyLevelTwo,
+            path: [keyLevelOne, keyLevelTwo],
           });
         }
       });
 
       // 3
       docs.forEach((arrPath) => {
-        const prev = arrPath[1];
-        const name = arrPath[2];
-        if (!unique.has(prev + name)) {
-          const id = this.obj[arrPath[0]][prev][name].id;
-          unique.add(prev + name);
+        const keyLevelOne = arrPath[0];
+        const keyLevelTwo = arrPath[1];
+        const keyLevelThree = arrPath[2];
+        if (!unique.has(keyLevelOne + keyLevelTwo + keyLevelThree)) {
+          const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree].id;
+          unique.add(keyLevelOne + keyLevelTwo + keyLevelThree);
           list[3].push({
             id,
-            name,
+            name: keyLevelThree,
+            path: [keyLevelOne, keyLevelTwo, keyLevelThree],
           });
         }
       });
@@ -385,6 +378,26 @@ export default {
 
     isLastElement(idx, arr) {
       return idx + 1 === arr.length;
+    },
+
+    editLanguage(item) {
+      alert(item.path + '\nЯзык');
+    },
+
+    editVid(item) {
+      alert(item.path + '\nВид документации');
+    },
+
+    editType(item) {
+      alert(item.path + '\nТип документации');
+    },
+
+    deleteClass(item) {
+      alert(item.id + '\nУдаление класса документации');
+    },
+
+    editDocuments(item) {
+      alert(item.path + '\nДокументы');
     },
   },
 };
