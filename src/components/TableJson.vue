@@ -18,7 +18,7 @@
     </div>
 
     <div
-      v-for="(item, idx) in level_2"
+      v-for="(item, idx) in levelList[2]"
       :class="[`${getLevelClass(2)} ${getLevelClass(2)}-${idx + 1}`]"
       :style="{ gridArea: `${getLevelClass(2)}-${idx + 1}` }"
     >
@@ -26,7 +26,7 @@
     </div>
 
     <div
-      v-for="(item, idx) in level_3"
+      v-for="(item, idx) in levelList[3]"
       :class="[`${getLevelClass(3)} ${getLevelClass(3)}-${idx + 1}`]"
       :style="{ gridArea: `${getLevelClass(3)}-${idx + 1}` }"
     >
@@ -34,7 +34,7 @@
     </div>
 
     <div
-      v-for="(item, idx) in level_4"
+      v-for="(item, idx) in levelList[4]"
       :class="[`${getLevelClass(4)} ${getLevelClass(4)}-${idx + 1}`]"
       :style="{ gridArea: `${getLevelClass(4)}-${idx + 1}` }"
     >
@@ -51,7 +51,7 @@
     </div>
 
     <!-- строки с кнопками -->
-    <template v-for="(item, idx) in level_2">
+    <template v-for="(item, idx) in levelList[2]">
       <div
         :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-1`]"
         :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-1` }"
@@ -184,9 +184,9 @@ export default {
 
     level_5() {
       const keyLevelOne = this.level_1[0].name;
-      const keysLevelTwo = this.mapName(this.level_2);
-      const keysLevelThree = this.mapName(this.level_3);
-      const keysLevelFour = this.mapName(this.level_4);
+      const keysLevelTwo = this.mapName(this.level_2).sort();
+      const keysLevelThree = this.mapName(this.level_3).sort();
+      const keysLevelFour = this.mapName(this.level_4).sort();
 
       const data = [];
 
@@ -212,6 +212,62 @@ export default {
       });
 
       return data;
+    },
+
+    levelList() {
+      const docs = this.level_5.map((el) => el.path);
+
+      const unique = new Set();
+
+      const list = {
+        2: [],
+        3: [],
+        4: [],
+      };
+
+      // 2
+      docs.forEach((arrPath) => {
+        const prev = arrPath[0];
+        const name = arrPath[1];
+        if (!unique.has(prev + name)) {
+          const id = this.obj[prev][name].id;
+          unique.add(prev + name);
+          list[2].push({
+            id,
+            name,
+          });
+        }
+      });
+
+      // 3
+      docs.forEach((arrPath) => {
+        const prev = arrPath[1];
+        const name = arrPath[2];
+        if (!unique.has(prev + name)) {
+          const id = this.obj[arrPath[0]][prev][name].id;
+          unique.add(prev + name);
+          list[3].push({
+            id,
+            name,
+          });
+        }
+      });
+
+      // 4
+      docs.forEach((arrPath) => {
+        const keyLevelOne = arrPath[0];
+        const keyLevelTwo = arrPath[1];
+        const keyLevelThree = arrPath[2];
+        const keyLevelFour = arrPath[3];
+
+        const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour].id;
+        list[4].push({
+          id,
+          name: keyLevelFour,
+        });
+      });
+
+      return list;
     },
 
     gridAreas() {
