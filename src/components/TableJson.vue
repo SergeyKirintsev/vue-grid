@@ -23,6 +23,7 @@
       :style="{ gridArea: `${getLevelClass(2)}-${idx + 1}` }"
     >
       {{ item.name }}
+      <button class="trash-btn" @click="deleteClass(item)"></button>
     </div>
 
     <div
@@ -31,6 +32,7 @@
       :style="{ gridArea: `${getLevelClass(3)}-${idx + 1}` }"
     >
       {{ item.name }}
+      <button class="trash-btn" @click="deleteClass(item)"></button>
     </div>
 
     <div
@@ -39,6 +41,7 @@
       :style="{ gridArea: `${getLevelClass(4)}-${idx + 1}` }"
     >
       {{ item.name }}
+      <button class="trash-btn" @click="deleteClass(item)"></button>
     </div>
 
     <div
@@ -422,6 +425,7 @@ export default {
   background: transparent;
   background-image: url('../assets/edit.svg');
   background-repeat: no-repeat;
+  background-size: contain;
 
   border: none;
   outline: none;
@@ -439,6 +443,7 @@ export default {
   border: none;
   outline: none;
   margin: 5px;
+  background-size: contain;
 }
 
 .doc-amount {
@@ -465,5 +470,22 @@ export default {
 .doc-lang,
 .doc-vid {
   border-right: 1px solid #d4dbec;
+  display: flex;
+  justify-content: space-between;
+}
+
+.doc-type .trash-btn {
+  height: 25px;
+  width: 25px;
+}
+
+.doc-lang .trash-btn {
+  height: 25px;
+  width: 25px;
+}
+
+.doc-vid .trash-btn {
+  height: 25px;
+  width: 25px;
 }
 </style>
