@@ -9,7 +9,7 @@
     </div>
 
     <div
-      v-for="(item, idx) in level_1"
+      v-for="(item, idx) in levelList[1]"
       :class="[`${getLevelClass(1)} ${getLevelClass(1)}-${idx + 1}`]"
       :style="{ gridArea: `${getLevelClass(1)}-${idx + 1}` }"
     >
@@ -45,7 +45,7 @@
     </div>
 
     <div
-      v-for="(item, idx) in level_5"
+      v-for="(item, idx) in levelList[5]"
       :class="[`${getLevelClass(5)} ${getLevelClass(5)}-${idx + 1}`]"
       :style="{ gridArea: `${getLevelClass(5)}-${idx + 1}` }"
     >
@@ -59,7 +59,7 @@
         :class="[`${getLevelClass('line')} ${getLevelClass('line')}-${idx + 1}-1`]"
         :style="{ gridArea: `${getLevelClass('line')}-${idx + 1}-1` }"
       >
-        <button v-if="isLastElement(idx, level_2)" class="edit-btn" @click="editType(item)"></button>
+        <button v-if="isLastElement(idx, levelList[2])" class="edit-btn" @click="editType(item)"></button>
       </div>
 
       <div
@@ -91,177 +91,72 @@ export default {
   name: 'TableJson',
 
   props: {
-    obj: Object,
+    // obj: Object,
     headers: Array,
+    levelAll: Array,
   },
 
   computed: {
-    level_1() {
-      const key = Object.keys(this.obj)[0];
-      const id = this.obj[key].id;
-      return [
-        {
-          id,
-          name: key,
-        },
-      ];
-    },
-
-    level_2() {
-      const keyLevelOne = this.level_1[0].name;
-      const keysLevelTwo = Object.keys(this.obj[keyLevelOne]).filter(this.notId);
-
-      const data = [];
-
-      keysLevelTwo.forEach((key) => {
-        const id = this.obj[keyLevelOne][key].id;
-        const name = key;
-        data.push({
-          id,
-          name,
-        });
-      });
-
-      return data;
-    },
-
-    level_3() {
-      const keyLevelOne = this.level_1[0].name;
-      const keysLevelTwo = this.mapName(this.level_2);
-
-      const data = [];
-
-      keysLevelTwo.forEach((keyLevelTwo) => {
-        const keysLevelThree = Object.keys(this.obj[keyLevelOne][keyLevelTwo]).filter(this.notId);
-
-        keysLevelThree.forEach((keyLevelThree) => {
-          const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree].id;
-          const name = keyLevelThree;
-          data.push({
-            id,
-            name,
-          });
-        });
-      });
-
-      return data;
-    },
-
-    level_4() {
-      const keyLevelOne = this.level_1[0].name;
-      const keysLevelTwo = this.mapName(this.level_2);
-      const keysLevelThree = this.mapName(this.level_3);
-
-      const data = [];
-
-      keysLevelTwo.forEach((keyLevelTwo) => {
-        keysLevelThree.forEach((keyLevelThree) => {
-          const current = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree];
-          if (current) {
-            const keysLevelFour = Object.keys(current).filter(this.notId);
-
-            keysLevelFour.forEach((keyLevelFour) => {
-              const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour].id;
-              const name = keyLevelFour;
-              data.push({
-                id,
-                name,
-              });
-            });
-          }
-        });
-      });
-
-      return data;
-    },
-
-    level_5() {
-      const keyLevelOne = this.level_1[0].name;
-      const keysLevelTwo = this.mapName(this.level_2).sort();
-      const keysLevelThree = this.mapName(this.level_3).sort();
-      const keysLevelFour = this.mapName(this.level_4).sort();
-
-      const data = [];
-
-      keysLevelTwo.forEach((keyLevelTwo) => {
-        keysLevelThree.forEach((keyLevelThree) => {
-          keysLevelFour.forEach((keyLevelFour) => {
-            const current = this.obj[keyLevelOne][keyLevelTwo]?.[keyLevelThree]?.[keyLevelFour];
-            if (current) {
-              const keysLevelFive = Object.keys(current).filter(this.notId);
-
-              const name = keysLevelFive[0];
-              const value = current[name];
-              const path = [keyLevelOne, keyLevelTwo, keyLevelThree, keyLevelFour];
-
-              data.push({
-                name,
-                value,
-                path,
-              });
-            }
-          });
-        });
-      });
-
-      return data;
-    },
-
     levelList() {
-      const docs = this.level_5.map((el) => el.path);
+      const docs = this.levelAll;
 
       const unique = new Set();
 
       const list = {
+        1: [],
         2: [],
         3: [],
         4: [],
+        5: [],
       };
+
+      const one = docs[0][0];
+      list[1].push({...one});
 
       // 2
       docs.forEach((arrPath) => {
-        const keyLevelOne = arrPath[0];
-        const keyLevelTwo = arrPath[1];
+        const keyLevelOne = arrPath[0].name;
+        const keyLevelTwo = arrPath[1].name;
         if (!unique.has(keyLevelOne + keyLevelTwo)) {
-          const id = this.obj[keyLevelOne][keyLevelTwo].id;
+          const id = arrPath[1].id;
           unique.add(keyLevelOne + keyLevelTwo);
           list[2].push({
             id,
             name: keyLevelTwo,
-            path: [keyLevelOne, keyLevelTwo],
+            path: [...arrPath],
           });
         }
       });
 
       // 3
       docs.forEach((arrPath) => {
-        const keyLevelOne = arrPath[0];
-        const keyLevelTwo = arrPath[1];
-        const keyLevelThree = arrPath[2];
+        const keyLevelOne = arrPath[0].name;
+        const keyLevelTwo = arrPath[1].name;
+        const keyLevelThree = arrPath[2].name;
         if (!unique.has(keyLevelOne + keyLevelTwo + keyLevelThree)) {
-          const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree].id;
+          const id = arrPath[2].id;
           unique.add(keyLevelOne + keyLevelTwo + keyLevelThree);
           list[3].push({
             id,
             name: keyLevelThree,
-            path: [keyLevelOne, keyLevelTwo, keyLevelThree],
+            path: [...arrPath],
           });
         }
       });
 
       // 4
       docs.forEach((arrPath) => {
-        const keyLevelOne = arrPath[0];
-        const keyLevelTwo = arrPath[1];
-        const keyLevelThree = arrPath[2];
-        const keyLevelFour = arrPath[3];
-
-        const id = this.obj[keyLevelOne][keyLevelTwo][keyLevelThree][keyLevelFour].id;
         list[4].push({
-          id,
-          name: keyLevelFour,
+          ...arrPath[3],
+          path: [...arrPath],
+        });
+        list[5].push({
+          ...arrPath[4],
+          path: [...arrPath],
         });
       });
+
+      // docs.forEach((arrPath) )
 
       return list;
     },
@@ -295,16 +190,16 @@ export default {
         },
       };
 
-      const docs = this.level_5.map((el) => el.path);
+      const docs = this.levelAll;
 
       /*  сохраняем значения для сравнения
        *  и изменения индекса в случае изменения
        */
       const arr0 = docs[0];
-      levels[1].name = arr0[0];
-      levels[2].name = arr0[1];
-      levels[3].name = arr0[2];
-      levels[4].name = arr0[3];
+      levels[1].name = arr0[0].name;
+      levels[2].name = arr0[1].name;
+      levels[3].name = arr0[2].name;
+      levels[4].name = arr0[3].name;
 
       docs.forEach((arrPath, str) => {
         let areasLine = '';
@@ -313,20 +208,27 @@ export default {
 
         for (let idx = 1; idx <= 4; idx++) {
           // увеличиваем индекс (levels[idx].index++) при смене наименования
-          if (levels[idx].name !== arrPath[idx - 1]) {
+          if (levels[idx].name !== arrPath[idx - 1].name) {
             levels[idx].index++;
-            levels[idx].name = arrPath[idx - 1];
+            levels[idx].name = arrPath[idx - 1].name;
 
             if (idx === 2) {
               areas.push(this.getLine(levels.line.index));
               levels.line.index++;
               isLevel_2_Changed = true; // Тип документации
               levels[3].index++;
+              levels[4].index++;
             }
 
             if (idx === 3) {
               if (isLevel_2_Changed) {
                 levels[3].index--;
+              }
+            }
+
+            if (idx === 4) {
+              if (isLevel_2_Changed) {
+                levels[4].index--;
               }
             }
           }
